@@ -6,8 +6,18 @@ A minimal TypeScript project scaffold.
 
 - `npm install` - install dependencies
 - `npm run build` - compile TypeScript to `dist`
-- `npm start` - run the app directly with `ts-node`
+- `npm start` - run the compiled application from `dist`
 - `npm run dev` - run the TypeScript compiler in watch mode
+
+## Deployment
+
+This project can be deployed to any Node.js host such as Render, Railway, Fly, or Heroku.
+
+- Build command: `npm install && npm run build`
+- Start command: `npm start`
+- Port: read from `PORT`
+
+> The app stores runtime data in `marketplace-data.json`. In cloud hosting this file may be ephemeral and can reset after restarts.
 
 ## Local marketplace server
 
