@@ -1,0 +1,16 @@
+{
+  "name": "marketplace-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  }
+}

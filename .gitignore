@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.env
+marketplace-data.json
+*.log
+.DS_Store

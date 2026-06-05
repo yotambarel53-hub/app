@@ -1,0 +1,149 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #eef2ff;
+  color: #1f2937;
+}
+main {
+  max-width: 1120px;
+  margin: 24px auto;
+  padding: 0 16px 32px;
+}
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+}
+.hero h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+.hero p {
+  margin: 8px 0 0;
+  color: #374151;
+}
+.status-card,
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.status-card {
+  display: grid;
+  gap: 10px;
+}
+.cards-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.card.full-width {
+  grid-column: 1 / -1;
+}
+.card h2,
+.status-card h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+label {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 0.96rem;
+}
+input,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  margin-top: 6px;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+button {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+button:hover {
+  background: #4338ca;
+}
+button.disabled {
+  background: #94a3b8;
+  cursor: default;
+}
+.hidden {
+  display: none !important;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+.product-card {
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.product-card h3 {
+  margin: 0 0 6px;
+}
+.product-owner,
+.product-price,
+.product-status {
+  margin: 0;
+  font-size: 0.95rem;
+}
+.product-status {
+  color: #2563eb;
+}
+.product-status.sold {
+  color: #dc2626;
+}
+.product-actions {
+  margin-top: auto;
+}
+.message-card {
+  min-height: 120px;
+}
+.message {
+  padding: 16px;
+  border-radius: 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+.message.error {
+  background: #fee2e2;
+  border-color: #fecaca;
+}
+.message.success {
+  background: #dcfce7;
+  border-color: #bbf7d0;
+}
+.message.info {
+  background: #e0f2fe;
+  border-color: #bae6fd;
+}
+.secondary-button {
+  background: #f3f4f6;
+  color: #111827;
+}
+.profile-info {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  color: #4b5563;
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketplace App - חנות מקומית</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <div>
+        <h1>Marketplace App</h1>
+        <p>חנות מקומית שבה משתמשים יכולים למכור ולקנות מוצרים באמצעות מטבעות וירטואליות.</p>
+      </div>
+      <button id="logout-button" class="secondary-button hidden">התנתק</button>
+    </header>
+
+    <section class="status-card">
+      <div id="welcome">ברוך הבא לחנות המקומית! התחבר או הרשם כדי להתחיל לקנות ולמכור.</div>
+      <div id="balance"></div>
+      <div class="profile-info">
+        <span id="current-user-name"></span>
+        <span id="current-user-email"></span>
+      </div>
+    </section>
+
+    <section id="auth-section" class="cards-row">
+      <article class="card">
+        <h2>התחברות</h2>
+        <form id="login-form">
+          <label>שם משתמש <input name="username" required /></label>
+          <label>סיסמה <input name="password" type="password" required /></label>
+          <button type="submit">התחבר</button>
+        </form>
+      </article>
+
+      <article class="card">
+        <h2>הרשמה</h2>
+        <form id="register-form">
+          <label>שם מלא <input name="fullName" required /></label>
+          <label>אימייל <input name="email" type="email" required /></label>
+          <label>שם משתמש <input name="username" required /></label>
+          <label>סיסמה <input name="password" type="password" required /></label>
+          <button type="submit">הרשם</button>
+        </form>
+      </article>
+    </section>
+
+    <section id="seller-section" class="cards-row hidden">
+      <article class="card full-width">
+        <h2>הוסף מוצר למכירה</h2>
+        <form id="product-form">
+          <label>שם מוצר <input name="productName" required /></label>
+          <label>תיאור <textarea name="description" rows="3" required></textarea></label>
+          <label>מחיר (מטבעות) <input name="price" type="number" min="1" step="1" required /></label>
+          <button type="submit">הוסף מוצר</button>
+        </form>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>קטלוג מוצרים</h2>
+      <div id="product-list" class="product-grid"></div>
+    </section>
+
+    <section class="card message-card">
+      <h2>הודעות</h2>
+      <div id="message-box">הודעות כאן יופיעו כאשר תבצעו פעולות בחנות.</div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
