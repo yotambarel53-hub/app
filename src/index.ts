@@ -1,6 +1,7 @@
 import { createServer, IncomingMessage, ServerResponse } from "http";
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } from "fs";
 import { extname, resolve, basename } from "path";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { fileURLToPath } from "url";
 import formidable from "formidable";
 
@@ -9,6 +10,11 @@ const __dirname = resolve(__filename, "..");
 const publicDir = resolve(__dirname, "../public");
 const dbPath = resolve(__dirname, "../marketplace-data.json");
 const port = parseInt(process.env.PORT ?? "3000", 10);
+
+const s3Bucket = process.env.S3_BUCKET;
+const s3Region = process.env.AWS_REGION;
+const s3BaseUrl = process.env.S3_BASE_URL;
+const s3Client = s3Bucket && s3Region ? new S3Client({ region: s3Region }) : undefined;
 
 type User = {
   id: number;
@@ -228,7 +234,29 @@ const handleApi = async (req: IncomingMessage, res: ServerResponse, pathname: st
           const file = Array.isArray(files.image) ? files.image[0] : files.image;
           const savedPath = file.filepath || file.filePath || file.path;
           if (savedPath) {
-            imageUrl = `/uploads/${basename(savedPath)}`;
+            if (s3Client && s3Bucket) {
+              try {
+                const fileBuffer = readFileSync(savedPath);
+                const key = `uploads/${Date.now()}-${basename(savedPath)}`;
+                const contentType = file.mimetype || file.mimetypeType || file.type || "application/octet-stream";
+                await s3Client.send(new PutObjectCommand({
+                  Bucket: s3Bucket,
+                  Key: key,
+                  Body: fileBuffer,
+                  ContentType: contentType,
+                  ACL: "public-read",
+                }));
+                imageUrl = s3BaseUrl ? `${s3BaseUrl.replace(/\/$/, "")}/${key}` : `https://${s3Bucket}.s3.${s3Region}.amazonaws.com/${key}`;
+              } catch (err) {
+                console.error("S3 upload failed:", err);
+                // fallback to local URL
+                imageUrl = `/uploads/${basename(savedPath)}`;
+              } finally {
+                try { unlinkSync(savedPath); } catch {}
+              }
+            } else {
+              imageUrl = `/uploads/${basename(savedPath)}`;
+            }
           }
         }
       } else {
