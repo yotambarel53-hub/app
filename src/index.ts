@@ -1,7 +1,8 @@
 import { createServer, IncomingMessage, ServerResponse } from "http";
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import { extname, resolve } from "path";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { extname, resolve, basename } from "path";
 import { fileURLToPath } from "url";
+import formidable from "formidable";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, "..");
@@ -27,6 +28,7 @@ type Product = {
   ownerName: string;
   available: boolean;
   buyerName?: string;
+  imageUrl?: string;
 };
 
 type Database = {
@@ -196,11 +198,47 @@ const handleApi = async (req: IncomingMessage, res: ServerResponse, pathname: st
     }
 
     if (pathname === "/api/products") {
-      const data = await parseBody(req);
-      const username = String(data.username ?? "").trim();
-      const name = String(data.name ?? "").trim();
-      const description = String(data.description ?? "").trim();
-      const price = Number(data.price ?? 0);
+      const contentType = String(req.headers["content-type"] ?? "");
+      let username = "";
+      let name = "";
+      let description = "";
+      let price = 0;
+      let imageUrl: string | undefined;
+
+      if (contentType.includes("multipart/form-data")) {
+        const uploadDir = resolve(publicDir, "uploads");
+        if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
+        const form = formidable({ multiples: false, uploadDir, keepExtensions: true });
+
+        const parsed: any = await new Promise((resolveP, rejectP) => {
+          form.parse(req, (err, fields, files) => {
+            if (err) return rejectP(err);
+            resolveP({ fields, files });
+          });
+        });
+
+        const fields = parsed.fields ?? {};
+        const files = parsed.files ?? {};
+        username = String(fields.username ?? "").trim();
+        name = String(fields.name ?? "").trim();
+        description = String(fields.description ?? "").trim();
+        price = Number(fields.price ?? 0);
+
+        if (files.image) {
+          const file = Array.isArray(files.image) ? files.image[0] : files.image;
+          const savedPath = file.filepath || file.filePath || file.path;
+          if (savedPath) {
+            imageUrl = `/uploads/${basename(savedPath)}`;
+          }
+        }
+      } else {
+        const data = await parseBody(req);
+        username = String(data.username ?? "").trim();
+        name = String(data.name ?? "").trim();
+        description = String(data.description ?? "").trim();
+        price = Number(data.price ?? 0);
+      }
+
       const user = findUser(username);
 
       if (!user) {
@@ -220,6 +258,7 @@ const handleApi = async (req: IncomingMessage, res: ServerResponse, pathname: st
         ownerId: user.id,
         ownerName: user.full_name,
         available: true,
+        imageUrl,
       };
       db.products.push(product);
       saveDatabase(db);
