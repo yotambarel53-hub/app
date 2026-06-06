@@ -1,0 +1,7 @@
+app = "marketplace-app"
+
+[env]
+  PORT = "3000"
+
+[build]
+  image = "Dockerfile"
