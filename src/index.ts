@@ -1,6 +1,6 @@
 import { createServer, IncomingMessage, ServerResponse } from "http";
 import { readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } from "fs";
-import { extname, resolve, basename } from "path";
+import { extname, resolve, basename, relative, sep } from "path";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { fileURLToPath } from "url";
 import formidable from "formidable";
@@ -69,6 +69,12 @@ const mimeTypes: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
   ".js": "application/javascript; charset=utf-8",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".gif": "image/gif",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
 };
 
 const sendFile = (res: ServerResponse, path: string, type: string): void => {
@@ -76,7 +82,8 @@ const sendFile = (res: ServerResponse, path: string, type: string): void => {
     const content = readFileSync(path);
     res.writeHead(200, { "Content-Type": type });
     res.end(content);
-  } catch {
+  } catch (err) {
+    console.error(`Failed to read file ${path}:`, err);
     res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("File not found");
   }
@@ -356,8 +363,10 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
   }
 
   if (req.method === "GET") {
-    const filePath = pathname === "/" ? resolve(publicDir, "index.html") : resolve(publicDir, `.${pathname}`);
-    if (!filePath.startsWith(publicDir)) {
+    const filePath = pathname === "/" ? resolve(publicDir, "index.html") : resolve(publicDir, pathname.slice(1));
+    const relPath = relative(publicDir, filePath);
+    console.log(`GET ${pathname} -> path=${filePath}, rel=${relPath}`);
+    if (relPath.startsWith("..")) {
       sendError(res, "גישה אסורה", 403);
       return;
     }
