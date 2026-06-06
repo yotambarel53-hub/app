@@ -217,7 +217,7 @@ const handleApi = async (req: IncomingMessage, res: ServerResponse, pathname: st
         const form = formidable({ multiples: false, uploadDir, keepExtensions: true });
 
         const parsed: any = await new Promise((resolveP, rejectP) => {
-          form.parse(req, (err, fields, files) => {
+          form.parse(req, (err: any, fields: any, files: any) => {
             if (err) return rejectP(err);
             resolveP({ fields, files });
           });
